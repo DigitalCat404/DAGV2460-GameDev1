@@ -17,24 +17,4 @@ public class DetectCollisions : MonoBehaviour
         uIManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
     }
-
-    /*private void OnTriggerEnter2D(Collider2D other){
-        Debug.Log("pickup found contact");
-
-        if(other.gameObject.CompareTag("Player")){
-            uIManager.IncrementPickup();
-            playerController.setInventory(gameObject.tag);
-            Destroy(gameObject);
-            
-        }
-    }*/
-
-    //if out of health, delete UFO
-    /*void CheckDeath(){
-        if(healthValue <= 0){
-            Explosion();
-            scoreManager.IncreaseScore(scoreToGive);
-            Destroy(this.gameObject);
-        }
-    }*/
 }

@@ -7,8 +7,12 @@ public class Health : MonoBehaviour
 {
     public int maxHealth;
     public int curHealth;
+
     public float invulDuration = 0.5f;
-    private float invulTimer = 0;
+    private float lastHitTime = 0;
+    private Color original;
+    private Color invulnerable;
+    public AudioClip ouch;
 
     public int numOfHearts; //number of hearts
     public Image[] hearts; //Number of heart images in the UI
@@ -23,12 +27,23 @@ public class Health : MonoBehaviour
         numOfHearts = curHealth;
 
         HeartUpdate();
+
+        original = GetComponent<SpriteRenderer>().color;
+        invulnerable = new Color(original.r, original.g, original.b, 0.5f);
+    }
+
+    void Update(){
+        if(Time.time > lastHitTime + invulDuration){
+            InvulTransparency(false);
+        } else {
+            InvulTransparency(true);
+        }
     }
     
     
     public void TakeDamage(int damage){
         
-        if(Time.time > invulTimer + invulDuration){
+        if(Time.time > lastHitTime + invulDuration){
             curHealth -= damage;
             Debug.Log("Player took " + damage);
 
@@ -36,7 +51,10 @@ public class Health : MonoBehaviour
                 Time.timeScale = 0;
                 Debug.Log("Game over!");
             } else {
-                invulTimer = Time.time;
+                lastHitTime = Time.time;
+
+                //play audio for taking damage
+                GetComponent<AudioSource>().PlayOneShot(ouch, 1f);
             }
 
             HeartUpdate();
@@ -79,6 +97,18 @@ public class Health : MonoBehaviour
             } else {
                 hearts[i].enabled = false;
             }
+        }
+    }
+
+
+    private void InvulTransparency(bool isInvul){
+        //make transparent while invul
+        if(isInvul){
+            GetComponent<SpriteRenderer>().color = invulnerable;
+
+        //make opaque on exit invul
+        } else {
+            GetComponent<SpriteRenderer>().color = original;
         }
     }
 }

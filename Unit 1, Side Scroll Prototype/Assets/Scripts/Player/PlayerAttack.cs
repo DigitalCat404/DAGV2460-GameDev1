@@ -22,7 +22,7 @@ public class PlayerAttack : MonoBehaviour
         if((Time.timeScale != 0)&&(Time.time > lastAttack + cooldown)){ //prevent inputs at bad times
 
             //swing melee
-            if(Input.GetButton("Fire1")){
+            /*if(Input.GetButton("Fire2")){
                 //gather list of all enemies hit in melee range
                 Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPos.position, meleeRange, whatIsEnemies);
 
@@ -34,7 +34,7 @@ public class PlayerAttack : MonoBehaviour
                 lastAttack = Time.time;
             
             //cast Fireball
-            } else if(Input.GetButton("Fire2")){
+            } else*/ if(Input.GetButton("Fire1")){
                 lastAttack = Time.time;
                 Fireball();
             }
