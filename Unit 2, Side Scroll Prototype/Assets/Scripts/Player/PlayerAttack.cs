@@ -16,10 +16,12 @@ public class PlayerAttack : MonoBehaviour
     public float cooldown = 0.3f; //attack cooldown
     private float lastAttack; //attack Delay
 
+    private bool isDead = false;
+
     // Update is called once per frame
     void Update()
     {
-        if((Time.timeScale != 0)&&(Time.time > lastAttack + cooldown)){ //prevent inputs at bad times
+        if((!isDead)&&(Time.time > lastAttack + cooldown)){ //prevent inputs at bad times
 
             //swing melee
             /*if(Input.GetButton("Fire2")){
@@ -54,5 +56,9 @@ public class PlayerAttack : MonoBehaviour
 
     public int GiveFireDamage(){
         return fireDamage;
+    }
+
+    public void setDeath(bool death){
+        isDead = death;
     }
 }

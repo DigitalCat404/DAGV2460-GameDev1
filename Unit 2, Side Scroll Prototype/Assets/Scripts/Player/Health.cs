@@ -5,24 +5,32 @@ using UnityEngine.UI; //add UI library
 
 public class Health : MonoBehaviour
 {
+    [Header("PlayerStats")]
     public int maxHealth;
     public int curHealth;
-
     public float invulDuration = 0.5f;
     private float lastHitTime = 0;
+
+    [Header("Damage Receiving")]
     private Color original;
     private Color invulnerable;
     public AudioClip ouch;
 
+    [Header("Heart System")]
     public int numOfHearts; //number of hearts
     public Image[] hearts; //Number of heart images in the UI
     public Sprite fullHeart;
     public Sprite emptyHeart;
 
+    [Header("Game Objects")]
+    private Animator playerAnim;
+    private PlayerController playerController;
+    private PlayerAttack playerAttack;
+    private UIManager UIManager;
+
     // Start is called before the first frame update
     void Start()
     {
-        Time.timeScale = 1;
         curHealth = maxHealth;
         numOfHearts = curHealth;
 
@@ -30,6 +38,11 @@ public class Health : MonoBehaviour
 
         original = GetComponent<SpriteRenderer>().color;
         invulnerable = new Color(original.r, original.g, original.b, 0.5f);
+
+        playerAnim = GetComponent<Animator>();
+        playerController = GetComponent<PlayerController>();
+        playerAttack = GetComponent<PlayerAttack>();
+        UIManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
     }
 
     void Update(){
@@ -48,8 +61,7 @@ public class Health : MonoBehaviour
             Debug.Log("Player took " + damage);
 
             if(curHealth <= 0){
-                Time.timeScale = 0;
-                Debug.Log("Game over!");
+                GameOver();
             } else {
                 lastHitTime = Time.time;
 
@@ -110,5 +122,23 @@ public class Health : MonoBehaviour
         } else {
             GetComponent<SpriteRenderer>().color = original;
         }
+    }
+
+    private void GameOver(){
+        playerAnim.SetBool("isDead",true);
+
+        playerController.setDeath(true);
+        playerAttack.setDeath(true);
+
+        UIManager.GameOver();
+
+        Debug.Log("Game over!");
+
+        Invoke("FreezeTime", 1f);
+    }
+
+    private void FreezeTime(){
+        Time.timeScale = 0;
+        Debug.Log("freezing time");
     }
 }

@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
 {
     private int pickupCount = 0;
     public TextMeshProUGUI pickupCounterText; //the text UI element to change
+    public TextMeshProUGUI gameOverText;
 
     void Start(){
         UpdatePickupCounter();
@@ -20,6 +21,10 @@ public class UIManager : MonoBehaviour
 
     private void UpdatePickupCounter(){
         pickupCounterText.text = "Pickups: " + pickupCount;
+    }
+
+    public void GameOver(){
+        gameOverText.gameObject.SetActive(true);
     }
 
     /*public void IncreaseScore(int amount){

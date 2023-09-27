@@ -8,9 +8,9 @@ public class PlayerController : MonoBehaviour
     [Header("PlayerStats")]
     private float horizontalInput;
     public float speed = 10;
-    //how high player jumps
-    public float jumpForce;
+    public float jumpForce; //how high player jumps
     public string inventory = "";
+    public bool isDead = false; //removes control of player if dead
     
     
     //Player Rigidbody
@@ -51,19 +51,21 @@ public class PlayerController : MonoBehaviour
         //check for ground
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround); //check for ground
 
-        //set horizontal to receive values from keyboard
-        horizontalInput = Input.GetAxis("Horizontal");
-        
-        //moves player left and right   Vector3.right = X-axis
-        rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
-        //transform.Translate(Vector3.right * horizontalInput * Time.deltaTime * speed);
+        if(!isDead){
+            //set horizontal to receive values from keyboard
+            horizontalInput = Input.GetAxis("Horizontal");
+            
+            //moves player left and right   Vector3.right = X-axis
+            rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
+            //transform.Translate(Vector3.right * horizontalInput * Time.deltaTime * speed);
 
-        //if moving, walk animation
-        CheckWalk();
+            //if moving, walk animation
+            CheckWalk();
 
-        //flip player when changing left/right direction
-        if((!isFacingRight && horizontalInput > 0)||(isFacingRight && horizontalInput < 0)){
-            FlipPlayer();
+            //flip player when changing left/right direction
+            if((!isFacingRight && horizontalInput > 0)||(isFacingRight && horizontalInput < 0)){
+                FlipPlayer();
+            }
         }
     }
 
@@ -77,7 +79,7 @@ public class PlayerController : MonoBehaviour
             playerAnim.SetBool("isGrounded", false);
         }
 
-        if(Input.GetKeyDown(KeyCode.Space) && ((dubJump || isGrounded)) ){
+        if(Input.GetKeyDown(KeyCode.Space) && ((dubJump || isGrounded)&&(!isDead)) ){
             rb.velocity = Vector2.up * jumpForce; //make player jump
 
             //set jump animation trigger
@@ -93,15 +95,17 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other){
 
-        //if hit by pickup, collect and put in inventory
-        if(other.tag == "Pickup"){
-            inventory = other.tag;
-            Debug.Log("Inventory: " + inventory);
-            UIManager.IncrementPickup();
+        if(!isDead){
+            //if hit by pickup, collect and put in inventory
+            if(other.tag == "Pickup"){
+                inventory = other.tag;
+                Debug.Log("Inventory: " + inventory);
+                UIManager.IncrementPickup();
 
-            //delete object with trigger striking player
-            Destroy(other.gameObject);
-            //Debug.Log("deleted collision");
+                //delete object with trigger striking player
+                Destroy(other.gameObject);
+                //Debug.Log("deleted collision");
+            }
         }
     }
 
@@ -133,5 +137,14 @@ public class PlayerController : MonoBehaviour
     public void setInventory(string item){
         inventory = item;
         Debug.Log("Inventory: " + inventory);
+    }
+
+
+    public void setDeath(bool death){
+        isDead = death;
+
+        if(isDead){
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
     }
 }
